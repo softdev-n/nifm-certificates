@@ -2,18 +2,13 @@ import streamlit as st
 import pandas as pd
 import os
 
-# ==========================================
-# 1. SETUP PAGE UI
-# ==========================================
 st.set_page_config(page_title="NIFM Certificate Portal", page_icon="🎓")
 
 st.title("🎓 NIFM Certificate Download Portal")
 st.write("Please enter your Employee ID below to securely download your certificate.")
 st.markdown("---")
 
-# ==========================================
-# 2. LOAD EMPLOYEE DATA
-# ==========================================
+
 @st.cache_data
 def load_data():
     df = pd.read_csv("employees.csv")
@@ -27,17 +22,12 @@ def load_data():
 
 df = load_data()
 
-# ==========================================
-# 3. CREATE THE LOGIN FORM
-# ==========================================
+
 with st.form("download_form"):
     user_id = st.text_input("Employee ID")
     
-    submit_button = st.form_submit_button("Find My Certificate")
+    submit_button = st.form_submit_button("Download Certificate")
 
-# ==========================================
-# 4. LOGIC WHEN BUTTON IS CLICKED
-# ==========================================
 if submit_button:
     user_id = user_id.strip()
     
@@ -47,7 +37,7 @@ if submit_button:
     if not match.empty:
         st.success("✅ Record matched! Your certificate is ready.")
         
-        # Format name exactly as generated
+        
         raw_name = str(match.iloc[0]['employee_name']).strip()
         name_parts = raw_name.split()
         
@@ -58,7 +48,7 @@ if submit_button:
             
         safe_name = employee_name.replace("/", "-")
         
-        # Look for the PDF
+        
         pdf_path = f"output_certificates/{user_id}_{safe_name}.pdf"
         
         if os.path.exists(pdf_path):
