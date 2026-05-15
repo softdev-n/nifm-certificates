@@ -18,6 +18,14 @@ st.markdown("---")
 def load_data():
     df = pd.read_csv("employees.csv")
     df.columns = df.columns.str.strip()
+    
+    # FIX: Clean the data immediately when loading so it matches perfectly
+    # 1. Convert ID to string, remove any '.0' that pandas might add, and remove spaces
+    df['employee_id'] = df['employee_id'].astype(str).str.replace(r'\.0$', '', regex=True).str.strip()
+    
+    # 2. Convert email to string and remove accidental spaces
+    df['employee_email'] = df['employee_email'].astype(str).str.strip()
+    
     return df
 
 df = load_data()
@@ -38,8 +46,8 @@ if submit_button:
     user_id = user_id.strip()
     user_email = user_email.strip()
     
-    # Match ID and Email
-    match = df[(df['employee_id'].astype(str) == user_id) & (df['employee_email'] == user_email)]
+    # Match ID and Email (Now comparing perfectly clean strings)
+    match = df[(df['employee_id'] == user_id) & (df['employee_email'] == user_email)]
     
     if not match.empty:
         st.success("✅ Records matched! Your certificate is ready.")
